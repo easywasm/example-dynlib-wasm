@@ -37,6 +37,9 @@ test('should be able to create a struct/string in lib1', ({ assert }) => {
   assert.equal(structPtr, 8200) // 5 bytes is aligned to 8
   assert.equal(copyStringFromMemory(namePtr), 'test1')
 
+  // 42/"test1\0"
+  assert.deepEqual(copyFromMemory(structPtr, 10), new Uint8Array([42, 0, 0, 0, 116, 101, 115, 116, 49, 0]))
+
   free(namePtr)
   free(structPtr)
 })
