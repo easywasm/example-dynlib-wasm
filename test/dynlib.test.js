@@ -8,8 +8,6 @@ const [lib1, lib2, lib3, lib4] = await loadModules('test/lib1.wasm', 'test/lib2.
 // this just prints "Hello"
 // lib1.example_log_function()
 
-// these tests don't even use any wasm
-
 test('should be able to create some memory with no wasm', ({ assert }) => {
   const buffer = new Uint8Array(5)
   buffer[1] = 1
@@ -26,8 +24,6 @@ test('should be able to create a string with no wasm', ({ assert }) => {
   assert.equal(copyStringFromMemory(strPtr), 'test0')
   free(strPtr)
 })
-
-// here we test passing things around between wasm
 
 test('should be able to create a struct/string in lib1', ({ assert }) => {
   const namePtr = copyStringToMemory('test1')

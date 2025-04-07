@@ -11,8 +11,9 @@ typedef struct {
     char name[32];
 } MyStruct;
 
-// shows using a pointer form some other mem, malloc here, and sprintf (both from wasi)
+// shows using a pointer from some other mem and sprintf (from wasi-sdk)
 // here I avoid allocating a string because malloc in wasi-sdk is not linked to the one in host in other wasms
+// I need to figure out how to share malloc/free between these
 WASM_EXPORT(example_mod_string) void example_mod_string(MyStruct* s, char* buffer ) {
     sprintf(buffer, "Hello %s", s->name);
 }
