@@ -31,6 +31,6 @@ WASM_EXPORT(example_log_function) void example_log_function() {
 // this illustrates wasi is working, even though it's not using stdlib
 WASM_EXPORT(example_random) int example_random() {
     int out = 0;
-    __wasi_random_get(&out, sizeof(int));
+    random_get(&out, sizeof(int));
     return out;
 }
