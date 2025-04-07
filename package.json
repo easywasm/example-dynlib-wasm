@@ -6,7 +6,7 @@
   "author": "konsumer",
   "license": "MIT",
   "scripts": {
-    "test": "node --test"
+    "test": "make test"
   },
   "exports": {
     ".": "index.js"
