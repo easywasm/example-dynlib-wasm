@@ -5,7 +5,18 @@ import { loadModules, copyStringToMemory, copyStringFromMemory, malloc, free } f
 // build these with `make`
 const [lib1, lib2, lib3, lib4] = await loadModules('test/lib1.wasm', 'test/lib2.wasm', 'test/lib3.wasm', 'test/lib4.wasm')
 
+// this just prints "Hello"
 // lib1.example_log_function()
+
+// these tests don't even use any wasm
+
+test('should be able to create a string with no wasm', ({ assert }) => {
+  const namePtr = copyStringToMemory('test0')
+  assert.equal(copyStringFromMemory(namePtr), 'test0')
+  free(namePtr)
+})
+
+// here we test passing things around between wasm
 
 test('should be able to create a struct/string in lib1', ({ assert }) => {
   const namePtr = copyStringToMemory('test1')
