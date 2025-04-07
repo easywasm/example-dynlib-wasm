@@ -7,7 +7,7 @@ typedef struct {
     char name[32];
 } MyStruct;
 
-WASM_EXPORT MyStruct* create_struct(int x, const char* name) {
+WASM_EXPORT(create_struct) MyStruct* create_struct(int x, const char* name) {
     // Verify input string
     int len = strlen(name);
 
@@ -29,19 +29,19 @@ WASM_EXPORT MyStruct* create_struct(int x, const char* name) {
 }
 
 // Debug functions
-WASM_EXPORT char get_name_char(MyStruct* s, int index) {
+WASM_EXPORT(get_name_char) char get_name_char(MyStruct* s, int index) {
     if(index >= 0 && index < 32) {
         return s->name[index];
     }
     return 0;
 }
 
-WASM_EXPORT int get_x(MyStruct* s) {
+WASM_EXPORT(get_x) int get_x(MyStruct* s) {
     return s->x;
 }
 
 // this shows malloc/strcpy/strlen/console_log/free
-WASM_EXPORT void example_log_function() {
+WASM_EXPORT(example_log_function) void example_log_function() {
     char* buffer = (char*)malloc(100);
     strcpy(buffer, "Hello");
     size_t len = strlen(buffer);

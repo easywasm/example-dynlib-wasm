@@ -3,24 +3,24 @@ import { test } from 'node:test'
 import { loadModules, copyStringToMemory, copyStringFromMemory, malloc, free } from '../src/host.js'
 
 // build these with `make`
-const [lib1, lib2] = await loadModules('test/lib1.wasm', 'test/lib2.wasm')
+const [lib1, lib2, lib3] = await loadModules('test/lib1.wasm', 'test/lib2.wasm', 'test/lib3.wasm')
 
-// lib1.example_log_function();
+// lib1.example_log_function()
 
 test('should be able to create a struct/string in lib1', ({ assert }) => {
-  const namePtr = copyStringToMemory('test')
+  const namePtr = copyStringToMemory('test1')
   const structPtr = lib1.create_struct(42, namePtr)
 
   assert.equal(namePtr, 8192)
   assert.equal(structPtr, 8200) // 4 bytes is aligned to 8
-  assert.equal(copyStringFromMemory(namePtr), 'test')
+  assert.equal(copyStringFromMemory(namePtr), 'test1')
 
   free(namePtr)
   free(structPtr)
 })
 
 test('should be able to call a function in lib2 that uses struct from lib1', ({ assert }) => {
-  const namePtr = copyStringToMemory('test')
+  const namePtr = copyStringToMemory('test2')
   const structPtr = lib1.create_struct(42, namePtr)
   lib2.process_struct(structPtr)
 
@@ -28,4 +28,17 @@ test('should be able to call a function in lib2 that uses struct from lib1', ({ 
 
   free(namePtr)
   free(structPtr)
+})
+
+test('should be able create a struct and print from lib3 (wasi)', ({ assert }) => {
+  const namePtr = copyStringToMemory('test3')
+  const structPtr = lib1.create_struct(42, namePtr)
+  const outPtr = malloc(100)
+  lib3.example_log_function(structPtr, outPtr)
+
+  assert.equal(copyStringFromMemory(outPtr), 'Hello test3')
+
+  free(namePtr)
+  free(structPtr)
+  free(outPtr)
 })

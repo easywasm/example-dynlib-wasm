@@ -1,31 +1,46 @@
 // this is a nodejs-based host tester
 
 import { readFile } from 'node:fs/promises'
+import WasiPreview1 from 'easywasi'
 
 import MemoryManager from './MemoryManager.js'
 
 export const env = {
   memory: new WebAssembly.Memory({ initial: 2 }),
   __indirect_function_table: new WebAssembly.Table({
-    initial: 10,
+    initial: 2,
     element: 'anyfunc'
   }),
   __stack_pointer: new WebAssembly.Global({ value: 'i32', mutable: true }, 65536),
   __memory_base: new WebAssembly.Global({ value: 'i32', mutable: false }, 8192),
   __table_base: new WebAssembly.Global({ value: 'i32', mutable: false }, 0),
+
   malloc: (size) => memoryManager.malloc(size),
   free: (ptr) => memoryManager.free(ptr),
-  console_log: (ptr) => {
+
+  console_log(ptr) {
     console.log(copyStringFromMemory(ptr))
   }
 }
 const memoryManager = new MemoryManager(8192, env)
 
+// this is used for things that import wasi
+const wasi_snapshot_preview1 = new WasiPreview1()
+
 export async function loadModules(...names) {
   const bytes = await Promise.all(names.map((f) => readFile(f)))
+
+  wasi_snapshot_preview1.setup({ memory: env.memory })
+
   return Promise.all(
     bytes.map(async (b) => {
-      const i = await WebAssembly.instantiate(b, { env })
+      const i = await WebAssembly.instantiate(b, { env, wasi_snapshot_preview1 })
+      if (i.instance.exports._initialize) {
+        i.instance.exports._initialize()
+      }
+      if (i.instance.exports._start) {
+        i.instance.exports._start()
+      }
       return i.instance.exports
     })
   )

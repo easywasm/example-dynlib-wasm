@@ -12,5 +12,8 @@
   "exports": {
     ".": "index.js"
   },
-  "description": "This is a simple example that follows [DynamicLinking](https://github.com/WebAssembly/tool-conventions/blob/main/DynamicLinking.md)."
+  "description": "This is a simple example that follows [DynamicLinking](https://github.com/WebAssembly/tool-conventions/blob/main/DynamicLinking.md).",
+  "dependencies": {
+    "easywasi": "^0.0.6"
+  }
 }

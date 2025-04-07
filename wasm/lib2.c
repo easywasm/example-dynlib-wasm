@@ -9,17 +9,17 @@ typedef struct {
 } MyStruct;
 
 // Function that takes a pointer to a struct created by lib1
-WASM_EXPORT void process_struct(MyStruct* s) {
+WASM_EXPORT(process_struct) void process_struct(MyStruct* s) {
     s->x *= 2;  // modify the shared struct
     // Could also modify the name if needed
 }
 
 // Function that returns information about the struct
-WASM_EXPORT int get_struct_value(MyStruct* s) {
+WASM_EXPORT(get_struct_value) int get_struct_value(MyStruct* s) {
     return s->x;
 }
 
 // Function to read the name from the struct
-WASM_EXPORT const char* get_struct_name(MyStruct* s) {
+WASM_EXPORT(get_struct_name) const char* get_struct_name(MyStruct* s) {
     return s->name;
 }
