@@ -6,7 +6,8 @@
   "author": "konsumer",
   "license": "MIT",
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "lint": "npx -y prettier --write ."
   },
   "exports": {
     ".": "index.js"
