@@ -1,4 +1,5 @@
 // this is light stdlib stuff that relies on host for mem-management
+// it should not be used in conjunction with wasi-sdk
 
 #ifndef WASM_SHARED_H
 #define WASM_SHARED_H
