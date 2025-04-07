@@ -1,0 +1,15 @@
+{
+  "name": "example-dynlib-wasm",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "author": "konsumer",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test"
+  },
+  "exports": {
+    ".": "index.js"
+  },
+  "description": "This is a simple example that follows [DynamicLinking](https://github.com/WebAssembly/tool-conventions/blob/main/DynamicLinking.md)."
+}

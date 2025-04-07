@@ -1,0 +1,50 @@
+// /opt/wasi-sdk/bin/clang -nostdlib -fPIC -shared -Wl,--experimental-pic -Wl,--no-entry -Wl,--export-all -Wl,--import-memory -o test/lib1.wasm wasm/lib1.c
+
+#include "wasm_shared.h"
+
+typedef struct {
+    int x;
+    char name[32];
+} MyStruct;
+
+WASM_EXPORT MyStruct* create_struct(int x, const char* name) {
+    // Verify input string
+    int len = strlen(name);
+
+    MyStruct* s = (MyStruct*)malloc(sizeof(MyStruct));
+    s->x = x;
+
+    // Clear name buffer
+    for(int i = 0; i < 32; i++) {
+        s->name[i] = 0;
+    }
+
+    // Copy string and verify each character
+    for(int i = 0; i < 31 && name[i]; i++) {
+        s->name[i] = name[i];
+    }
+    s->name[31] = '\0';
+
+    return s;
+}
+
+// Debug functions
+WASM_EXPORT char get_name_char(MyStruct* s, int index) {
+    if(index >= 0 && index < 32) {
+        return s->name[index];
+    }
+    return 0;
+}
+
+WASM_EXPORT int get_x(MyStruct* s) {
+    return s->x;
+}
+
+// this shows malloc/strcpy/strlen/console_log/free
+WASM_EXPORT void example_log_function() {
+    char* buffer = (char*)malloc(100);
+    strcpy(buffer, "Hello");
+    size_t len = strlen(buffer);
+    console_log(buffer);
+    free(buffer);
+}
