@@ -30,7 +30,7 @@ test('should be able to call a function in lib2 that uses struct from lib1', ({ 
   free(structPtr)
 })
 
-test('should be able create a struct and print from lib3 (wasi)', ({ assert }) => {
+test('should be able create a struct and modify from lib3 (wasi)', ({ assert }) => {
   const namePtr = copyStringToMemory('test3')
   const structPtr = lib1.create_struct(42, namePtr)
   const outPtr = malloc(100)
@@ -43,7 +43,7 @@ test('should be able create a struct and print from lib3 (wasi)', ({ assert }) =
   free(outPtr)
 })
 
-test('should be able create a struct and print from lib4 (wasi)', ({ assert }) => {
+test('should be able create a struct and modify from lib4 (wasi)', ({ assert }) => {
   const namePtr = copyStringToMemory('test4')
   const structPtr = lib1.create_struct(42, namePtr)
   const outPtr = malloc(100)
