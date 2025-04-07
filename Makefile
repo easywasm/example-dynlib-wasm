@@ -18,4 +18,4 @@ test/lib4.wasm: wasm/lib3.c
 # these modules use wasm_shared
 
 test/%.wasm: wasm/%.c
-	/opt/wasi-sdk/bin/clang -fPIC -shared -Wl,--experimental-pic -Wl,--no-entry -Wl,--import-memory -o $@ $<
+	/opt/wasi-sdk/bin/clang -nostdlib -fPIC -shared -Wl,--experimental-pic -Wl,--no-entry -Wl,--import-memory -o $@ $<

@@ -6,6 +6,7 @@
 
 #define WASM_EXPORT(name) __attribute__((export_name(#name)))
 #define WASM_IMPORT(name) __attribute__((import_module("env"))) __attribute__((import_name(#name)))
+#define WASI_IMPORT(name) __attribute__((import_module("wasi_snapshot_preview1"))) __attribute__((import_name(#name)))
 
 // Basic types
 typedef unsigned char uint8_t;
@@ -98,6 +99,138 @@ WASM_EXPORT(realloc) void* realloc(void* ptr, size_t size) {
 #define MIN(a,b) ((a) < (b) ? (a) : (b))
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define ABS(x) ((x) < 0 ? -(x) : (x))
+
+// these come from wasi in host
+
+/* WASI datatypes */
+typedef uint32_t __wasi_size_t;
+typedef uint64_t __wasi_timestamp_t;
+typedef uint64_t __wasi_filesize_t;
+typedef int64_t __wasi_filedelta_t;
+typedef uint32_t __wasi_fd_t;
+typedef uint64_t __wasi_device_t;
+typedef uint64_t __wasi_inode_t;
+typedef uint32_t __wasi_linkcount_t;
+typedef uint32_t __wasi_clockid_t;
+typedef uint16_t __wasi_oflags_t;
+typedef uint16_t __wasi_fstflags_t;
+typedef uint8_t __wasi_sdflags_t;
+typedef uint8_t __wasi_preopentype_t;
+typedef uint16_t __wasi_errno_t;
+typedef uint8_t __wasi_filetype_t;
+typedef uint16_t __wasi_riflags_t;
+typedef uint16_t __wasi_roflags_t;
+typedef uint16_t __wasi_siflags_t;
+typedef uint64_t __wasi_dircookie_t;
+typedef uint32_t __wasi_rights_t;
+typedef uint32_t __wasi_lookupflags_t;
+typedef uint16_t __wasi_fdflags_t;
+
+/* WASI structures */
+typedef struct {
+    __wasi_device_t dev;
+    __wasi_inode_t ino;
+    __wasi_filetype_t filetype;
+    __wasi_linkcount_t nlink;
+    __wasi_filesize_t size;
+    __wasi_timestamp_t atim;
+    __wasi_timestamp_t mtim;
+    __wasi_timestamp_t ctim;
+} __wasi_filestat_t;
+
+typedef struct {
+    __wasi_filetype_t filetype;
+    __wasi_rights_t fs_rights_base;
+    __wasi_rights_t fs_rights_inheriting;
+    __wasi_fdflags_t fs_flags;
+} __wasi_fdstat_t;
+
+typedef struct {
+    __wasi_preopentype_t pr_type;
+    union {
+        struct {
+            uint32_t dir_name_len;
+        } dir;
+    } u;
+} __wasi_prestat_t;
+
+typedef struct {
+    __wasi_dircookie_t d_next;
+    __wasi_inode_t d_ino;
+    uint32_t d_namlen;
+    __wasi_filetype_t d_type;
+} __wasi_dirent_t;
+
+/* WASI function declarations with import attributes */
+
+/* Command-line arguments */
+WASI_IMPORT(args_get) __wasi_errno_t __wasi_args_get(uint8_t **argv, uint8_t *argv_buf);
+WASI_IMPORT(args_sizes_get) __wasi_errno_t __wasi_args_sizes_get(size_t *argc, size_t *argv_buf_size);
+
+/* Environment variables */
+WASI_IMPORT(environ_get) __wasi_errno_t __wasi_environ_get(uint8_t **environ, uint8_t *environ_buf);
+WASI_IMPORT(environ_sizes_get) __wasi_errno_t __wasi_environ_sizes_get(size_t *environ_count, size_t *environ_buf_size);
+
+/* Clock operations */
+WASI_IMPORT(clock_res_get) __wasi_errno_t __wasi_clock_res_get(__wasi_clockid_t clock_id, __wasi_timestamp_t *resolution);
+WASI_IMPORT(clock_time_get) __wasi_errno_t __wasi_clock_time_get(__wasi_clockid_t clock_id, __wasi_timestamp_t precision, __wasi_timestamp_t *time);
+
+/* File descriptor operations */
+WASI_IMPORT(fd_close) __wasi_errno_t __wasi_fd_close(__wasi_fd_t fd);
+WASI_IMPORT(fd_seek) __wasi_errno_t __wasi_fd_seek(__wasi_fd_t fd, __wasi_filedelta_t offset, uint8_t whence, __wasi_filesize_t *newoffset);
+WASI_IMPORT(fd_write) __wasi_errno_t __wasi_fd_write(__wasi_fd_t fd, const void *iovs, size_t iovs_len, size_t *nwritten);
+WASI_IMPORT(fd_read) __wasi_errno_t __wasi_fd_read(__wasi_fd_t fd, const void *iovs, size_t iovs_len, size_t *nread);
+WASI_IMPORT(fd_fdstat_get) __wasi_errno_t __wasi_fd_fdstat_get(__wasi_fd_t fd, __wasi_fdstat_t *stat);
+WASI_IMPORT(fd_fdstat_set_flags) __wasi_errno_t __wasi_fd_fdstat_set_flags(__wasi_fd_t fd, __wasi_fdflags_t flags);
+WASI_IMPORT(fd_filestat_get) __wasi_errno_t __wasi_fd_filestat_get(__wasi_fd_t fd, __wasi_filestat_t *buf);
+WASI_IMPORT(fd_prestat_get) __wasi_errno_t __wasi_fd_prestat_get(__wasi_fd_t fd, __wasi_prestat_t *buf);
+WASI_IMPORT(fd_prestat_dir_name) __wasi_errno_t __wasi_fd_prestat_dir_name(__wasi_fd_t fd, uint8_t *path, size_t path_len);
+WASI_IMPORT(fd_advise) __wasi_errno_t __wasi_fd_advise(__wasi_fd_t fd, __wasi_filesize_t offset, __wasi_filesize_t len, uint8_t advice);
+WASI_IMPORT(fd_allocate) __wasi_errno_t __wasi_fd_allocate(__wasi_fd_t fd, __wasi_filesize_t offset, __wasi_filesize_t len);
+WASI_IMPORT(fd_datasync) __wasi_errno_t __wasi_fd_datasync(__wasi_fd_t fd);
+WASI_IMPORT(fd_filestat_set_size) __wasi_errno_t __wasi_fd_filestat_set_size(__wasi_fd_t fd, __wasi_filesize_t size);
+WASI_IMPORT(fd_filestat_set_times) __wasi_errno_t __wasi_fd_filestat_set_times(__wasi_fd_t fd, __wasi_timestamp_t atim, __wasi_timestamp_t mtim, __wasi_fstflags_t fst_flags);
+WASI_IMPORT(fd_pread) __wasi_errno_t __wasi_fd_pread(__wasi_fd_t fd, const void *iovs, size_t iovs_len, __wasi_filesize_t offset, size_t *nread);
+WASI_IMPORT(fd_pwrite) __wasi_errno_t __wasi_fd_pwrite(__wasi_fd_t fd, const void *iovs, size_t iovs_len, __wasi_filesize_t offset, size_t *nwritten);
+WASI_IMPORT(fd_readdir) __wasi_errno_t __wasi_fd_readdir(__wasi_fd_t fd, void *buf, size_t buf_len, __wasi_dircookie_t cookie, size_t *bufused);
+WASI_IMPORT(fd_renumber) __wasi_errno_t __wasi_fd_renumber(__wasi_fd_t from, __wasi_fd_t to);
+WASI_IMPORT(fd_sync) __wasi_errno_t __wasi_fd_sync(__wasi_fd_t fd);
+WASI_IMPORT(fd_tell) __wasi_errno_t __wasi_fd_tell(__wasi_fd_t fd, __wasi_filesize_t *offset);
+
+/* Path operations */
+WASI_IMPORT(path_open) __wasi_errno_t __wasi_path_open(__wasi_fd_t dirfd, __wasi_lookupflags_t dirflags, const char *path, 
+                              size_t path_len, __wasi_oflags_t oflags, __wasi_rights_t fs_rights_base, 
+                              __wasi_rights_t fs_rights_inheriting, __wasi_fdflags_t fdflags, __wasi_fd_t *fd);
+WASI_IMPORT(path_filestat_get) __wasi_errno_t __wasi_path_filestat_get(__wasi_fd_t fd, __wasi_lookupflags_t flags, const char *path, size_t path_len, __wasi_filestat_t *buf);
+WASI_IMPORT(path_create_directory) __wasi_errno_t __wasi_path_create_directory(__wasi_fd_t fd, const char *path, size_t path_len);
+WASI_IMPORT(path_filestat_set_times) __wasi_errno_t __wasi_path_filestat_set_times(__wasi_fd_t fd, __wasi_lookupflags_t flags, const char *path, 
+                                            size_t path_len, __wasi_timestamp_t atim, __wasi_timestamp_t mtim, 
+                                            __wasi_fstflags_t fst_flags);
+WASI_IMPORT(path_link) __wasi_errno_t __wasi_path_link(__wasi_fd_t old_fd, __wasi_lookupflags_t old_flags, const char *old_path, 
+                              size_t old_path_len, __wasi_fd_t new_fd, const char *new_path, size_t new_path_len);
+WASI_IMPORT(path_readlink) __wasi_errno_t __wasi_path_readlink(__wasi_fd_t fd, const char *path, size_t path_len, char *buf, size_t buf_len, size_t *bufused);
+WASI_IMPORT(path_remove_directory) __wasi_errno_t __wasi_path_remove_directory(__wasi_fd_t fd, const char *path, size_t path_len);
+WASI_IMPORT(path_rename) __wasi_errno_t __wasi_path_rename(__wasi_fd_t old_fd, const char *old_path, size_t old_path_len, 
+                                __wasi_fd_t new_fd, const char *new_path, size_t new_path_len);
+WASI_IMPORT(path_symlink) __wasi_errno_t __wasi_path_symlink(const char *old_path, size_t old_path_len, __wasi_fd_t fd, const char *new_path, size_t new_path_len);
+WASI_IMPORT(path_unlink_file) __wasi_errno_t __wasi_path_unlink_file(__wasi_fd_t fd, const char *path, size_t path_len);
+
+/* Process operations */
+WASI_IMPORT(proc_exit) _Noreturn void __wasi_proc_exit(uint32_t exit_code);
+
+/* Poll */
+WASI_IMPORT(poll_oneoff) __wasi_errno_t __wasi_poll_oneoff(const void *in, void *out, size_t nsubscriptions, size_t *nevents);
+
+/* Socket operations */
+WASI_IMPORT(sock_accept) __wasi_errno_t __wasi_sock_accept(__wasi_fd_t fd, __wasi_fdflags_t flags, __wasi_fd_t *fd_new);
+WASI_IMPORT(sock_recv) __wasi_errno_t __wasi_sock_recv(__wasi_fd_t fd, void *ri_data, size_t ri_data_len, __wasi_riflags_t ri_flags, 
+                             size_t *ro_datalen, __wasi_roflags_t *ro_flags);
+WASI_IMPORT(sock_send) __wasi_errno_t __wasi_sock_send(__wasi_fd_t fd, const void *si_data, size_t si_data_len, __wasi_siflags_t si_flags, size_t *so_datalen);
+WASI_IMPORT(sock_shutdown) __wasi_errno_t __wasi_sock_shutdown(__wasi_fd_t fd, __wasi_sdflags_t how);
+
+/* Random */
+WASI_IMPORT(random_get) __wasi_errno_t __wasi_random_get(void *buf, size_t buf_len);
+
 
 // Optional: printf-like functionality (if needed)
 WASM_IMPORT(console_log) void console_log(const char* str);

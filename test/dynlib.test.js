@@ -25,6 +25,11 @@ test('should be able to create a string with no wasm', ({ assert }) => {
   free(strPtr)
 })
 
+test('lib1 should be able to use wasi functions', ({ assert }) => {
+  const r = lib1.example_random()
+  assert.notEqual(r, 0)
+})
+
 test('should be able to create a struct/string in lib1', ({ assert }) => {
   const namePtr = copyStringToMemory('test1')
   const structPtr = lib1.create_struct(42, namePtr)
