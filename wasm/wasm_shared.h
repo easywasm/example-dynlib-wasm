@@ -22,7 +22,7 @@ typedef int bool;
 #define false 0
 #define NULL ((void*)0)
 
-// Memory management
+// Memory management (from host)
 WASM_IMPORT(malloc) void* malloc(size_t size);
 WASM_IMPORT(free) void free(void* ptr);
 
