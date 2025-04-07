@@ -29,6 +29,7 @@ test('lib1 should be able to use wasi functions', ({ assert }) => {
   const r = lib1.example_random()
   const d = lib1.example_time()
   assert.notEqual(r, 0)
+  assert.equal(typeof d, 'bigint')
   assert.notEqual(d, 0n)
 })
 
