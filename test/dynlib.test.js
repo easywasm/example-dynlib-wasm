@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 
-import { loadModules, copyStringToMemory, copyStringFromMemory, malloc, free } from '../src/host.js'
+import { loadModules, copyStringToMemory, copyStringFromMemory, malloc, free, copyToMemory, copyFromMemory } from '../src/host.js'
 
 // build these with `make`
 const [lib1, lib2, lib3, lib4] = await loadModules('test/lib1.wasm', 'test/lib2.wasm', 'test/lib3.wasm', 'test/lib4.wasm')
@@ -10,10 +10,21 @@ const [lib1, lib2, lib3, lib4] = await loadModules('test/lib1.wasm', 'test/lib2.
 
 // these tests don't even use any wasm
 
+test('should be able to create some memory with no wasm', ({ assert }) => {
+  const buffer = new Uint8Array(5)
+  buffer[1] = 1
+  buffer[2] = 2
+  buffer[3] = 3
+  buffer[4] = 4
+  const memPtr = copyToMemory(buffer)
+  assert.deepEqual(copyFromMemory(memPtr, 5), buffer)
+  free(memPtr)
+})
+
 test('should be able to create a string with no wasm', ({ assert }) => {
-  const namePtr = copyStringToMemory('test0')
-  assert.equal(copyStringFromMemory(namePtr), 'test0')
-  free(namePtr)
+  const strPtr = copyStringToMemory('test0')
+  assert.equal(copyStringFromMemory(strPtr), 'test0')
+  free(strPtr)
 })
 
 // here we test passing things around between wasm

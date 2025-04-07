@@ -53,18 +53,35 @@ export const memory = env.memory
 const decoder = new TextDecoder()
 const encoder = new TextEncoder()
 
-export function copyStringToMemory(str) {
+// send a string from host to wasm, ptr is optional
+export function copyStringToMemory(str, ptr) {
   const bytes = encoder.encode(str)
-  const ptr = env.malloc(bytes.length + 1)
+  ptr ||= env.malloc(bytes.length + 1)
   const mem = new Uint8Array(env.memory.buffer)
   mem.set(bytes, ptr)
   mem[ptr + bytes.length] = 0
   return ptr
 }
 
+// get a string from wasm to host
 export function copyStringFromMemory(ptr) {
   const mem = new Uint8Array(env.memory.buffer)
   const bytes = mem.slice(ptr)
   const end = bytes.indexOf(0)
   return decoder.decode(bytes.slice(0, end))
+}
+
+// copy memory (Uint8Array) from host to wasm, ptr is optional
+export function copyToMemory(bytes, ptr) {
+  ptr ||= env.malloc(bytes.length)
+  const mem = new Uint8Array(env.memory.buffer)
+  mem.set(bytes, ptr)
+  return ptr
+}
+
+// copy memory (Uint8Array) to host
+export function copyFromMemory(ptr, len) {
+  const mem = new Uint8Array(env.memory.buffer)
+  const bytes = mem.slice(ptr)
+  return bytes.slice(0, len)
 }
