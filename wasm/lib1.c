@@ -8,23 +8,10 @@ typedef struct {
 } MyStruct;
 
 WASM_EXPORT(create_struct) MyStruct* create_struct(int x, const char* name) {
-    // Verify input string
-    int len = strlen(name);
-
     MyStruct* s = (MyStruct*)malloc(sizeof(MyStruct));
     s->x = x;
-
-    // Clear name buffer
-    for(int i = 0; i < 32; i++) {
-        s->name[i] = 0;
-    }
-
-    // Copy string and verify each character
-    for(int i = 0; i < 31 && name[i]; i++) {
-        s->name[i] = name[i];
-    }
-    s->name[31] = '\0';
-
+    memcpy(s->name, name, 32);
+    s->name[31] = 0;
     return s;
 }
 
