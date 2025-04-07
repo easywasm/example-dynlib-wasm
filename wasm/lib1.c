@@ -15,14 +15,6 @@ WASM_EXPORT(create_struct) MyStruct* create_struct(int x, const char* name) {
     return s;
 }
 
-// Debug functions
-WASM_EXPORT(get_name_char) char get_name_char(MyStruct* s, int index) {
-    if(index >= 0 && index < 32) {
-        return s->name[index];
-    }
-    return 0;
-}
-
 WASM_EXPORT(get_x) int get_x(MyStruct* s) {
     return s->x;
 }
