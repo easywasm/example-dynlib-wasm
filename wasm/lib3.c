@@ -13,7 +13,7 @@ typedef struct {
 
 // shows using a pointer form some other mem, malloc here, and sprintf (both from wasi)
 // here I avoid allocating a string because malloc in wasi-sdk is not linked to the one in host in other wasms
-WASM_EXPORT(example_log_function) void example_log_function(MyStruct* s, char* buffer ) {
+WASM_EXPORT(example_mod_string) void example_mod_string(MyStruct* s, char* buffer ) {
     sprintf(buffer, "Hello %s", s->name);
 }
 

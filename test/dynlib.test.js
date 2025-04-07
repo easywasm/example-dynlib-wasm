@@ -34,7 +34,7 @@ test('should be able create a struct and modify from lib3 (wasi)', ({ assert }) 
   const namePtr = copyStringToMemory('test3')
   const structPtr = lib1.create_struct(42, namePtr)
   const outPtr = malloc(100)
-  lib3.example_log_function(structPtr, outPtr)
+  lib3.example_mod_string(structPtr, outPtr)
 
   assert.equal(copyStringFromMemory(outPtr), 'Hello test3')
 
@@ -47,7 +47,7 @@ test('should be able create a struct and modify from lib4 (wasi)', ({ assert }) 
   const namePtr = copyStringToMemory('test4')
   const structPtr = lib1.create_struct(42, namePtr)
   const outPtr = malloc(100)
-  lib4.example_log_function(structPtr, outPtr)
+  lib4.example_mod_string(structPtr, outPtr)
 
   assert.equal(copyStringFromMemory(outPtr), 'Hello test4')
 

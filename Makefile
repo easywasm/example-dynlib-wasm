@@ -9,10 +9,10 @@ clean:
 # this is 2 modules that export the same stuff and use WASI
 
 test/lib3.wasm: wasm/lib3.c
-	/opt/wasi-sdk/bin/clang -fPIC -Wl,--import-memory -o $@ $<
+	/opt/wasi-sdk/bin/clang -Wl,--import-memory -o $@ $<
 
 test/lib4.wasm: wasm/lib3.c
-	/opt/wasi-sdk/bin/clang -fPIC -Wl,--import-memory -o $@ $<
+	/opt/wasi-sdk/bin/clang -Wl,--import-memory -o $@ $<
 
 
 # these modules use wasm_shared
