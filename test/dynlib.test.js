@@ -27,7 +27,9 @@ test('should be able to create a string with no wasm', ({ assert }) => {
 
 test('lib1 should be able to use wasi functions', ({ assert }) => {
   const r = lib1.example_random()
+  const d = lib1.example_time()
   assert.notEqual(r, 0)
+  assert.notEqual(d, 0n)
 })
 
 test('should be able to create a struct/string in lib1', ({ assert }) => {

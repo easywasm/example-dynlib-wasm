@@ -34,3 +34,11 @@ WASM_EXPORT(example_random) int example_random() {
     random_get(&out, sizeof(int));
     return out;
 }
+
+// this illustrates wasi is working, even though it's not using stdlib
+WASM_EXPORT(example_time) __wasi_timestamp_t example_time() {
+    __wasi_timestamp_t time = 0;
+    clock_time_get(0, 0, &time);
+    return time;
+}
+
