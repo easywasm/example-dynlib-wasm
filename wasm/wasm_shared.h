@@ -99,12 +99,6 @@ WASM_EXPORT(realloc) void* realloc(void* ptr, size_t size) {
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 
-// Error handling
-typedef int errno_t;
-#define EINVAL 22
-#define ENOMEM 12
-extern errno_t errno;
-
 // Optional: printf-like functionality (if needed)
 WASM_IMPORT(console_log) void console_log(const char* str);
 
