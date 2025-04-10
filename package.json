@@ -9,11 +9,8 @@
     "test": "make test",
     "lint": "npx -y prettier --write ."
   },
-  "exports": {
-    ".": "index.js"
-  },
-  "description": "This is a simple example that follows [DynamicLinking](https://github.com/WebAssembly/tool-conventions/blob/main/DynamicLinking.md).",
+  "description": "Experimenting with dynamic linking in WebAssembly",
   "dependencies": {
-    "easywasi": "^0.0.6"
+    "@easywasm/wasi": "^0.0.8"
   }
 }

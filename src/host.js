@@ -1,7 +1,7 @@
 // this is a nodejs-based host tester
 
 import { readFile } from 'node:fs/promises'
-import WasiPreview1 from 'easywasi'
+import WasiPreview1 from '@easywasm/wasi'
 
 import MemoryManager from './MemoryManager.js'
 
