@@ -1,5 +1,6 @@
 // this will use wasi-sdk stuff without wasm_shared.h
 
+#include "wasm_shared.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -18,7 +19,6 @@ WASM_EXPORT(example_mod_string) void example_mod_string(MyStruct* s, char* buffe
     sprintf(buffer, "Hello %s", s->name);
 }
 
-// dummy function to show a typical WASI app
 int main() {
     return 0;
 }

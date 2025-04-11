@@ -23,3 +23,7 @@ WASM_EXPORT(get_struct_value) int get_struct_value(MyStruct* s) {
 WASM_EXPORT(get_struct_name) const char* get_struct_name(MyStruct* s) {
     return s->name;
 }
+
+int main() {
+    return 0;
+}
